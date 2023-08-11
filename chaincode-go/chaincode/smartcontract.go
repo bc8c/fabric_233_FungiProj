@@ -2,9 +2,11 @@ package chaincode
 
 import (
 	"encoding/json"
+	"encoding/binary"
 	"time"
 	"fmt"
 	"strconv"
+	"crypto/sha256"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -15,7 +17,9 @@ type SmartContract struct {
 }
 // Fungus Asset describes basic details
 type Fungus struct{
+	FungusId uint		`json:"fungusid"`
 	Name string			`json:"name"`
+	Owner string		`json:"owner"`
 	Dna uint			`json:"dna"`
 	ReadyTime uint32	`json:"readytime"`
 }
@@ -49,6 +53,7 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 		return false, fmt.Errorf("contract options are already set, client is not authorized to change them")
 	}
 
+	// Initialize FungusCountKey to zero(0)
 	err = ctx.GetStub().PutState(fungusCountKey, []byte(strconv.Itoa(0)))
 	if err != nil {
 		return false, fmt.Errorf("failed to set token name: %v", err)
@@ -59,17 +64,35 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 
 
 // CreateAsset issues a new asset to the world state with given details.
-func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, name string, dna uint) error {
+func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, fungusid uint, name string, dna uint) error {
 	// PutState Fungus in WSDB
+
+	// Check minter authorization - this sample assumes Org1 is the central banker with privilege to intitialize contract
+	clientID, err := ctx.GetClientIdentity().GetID()
+	if err != nil {
+		return fmt.Errorf("failed to get clientID: %v", err)
+	}
 
 	// readytime
 	nowTime := time.Now()
 	unixTime := nowTime.Unix()	
+	
+	// create randDNA
+	data := uint(unixTime)+fungusid
+	hash := sha256.New()
+	hash.Write([]byte(strconv.Itoa(int(data))))
+	hashDna := uint(binary.BigEndian.Uint64(hash.Sum(nil)))
+	// @need ( digit 14...... )
 
-	// overwriting original asset with new asset
+	
+	// hashDna := uint(hash.Sum(nil))
+
+	// overwriting original fungus with new fungus
 	fungus := Fungus{
+		FungusId: 	fungusid,
 		Name:		name,
-		Dna:		dna,
+		Owner:		clientID,
+		Dna:		hashDna,
 		ReadyTime:	uint32(unixTime),
 	}
 	assetJSON, err := json.Marshal(fungus)
@@ -77,7 +100,9 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 		return err
 	}
 
-	// create randDNA
+	
 
 	return ctx.GetStub().PutState(fungusCountKey+name, assetJSON)
+	
+	
 }
