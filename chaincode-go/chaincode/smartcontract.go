@@ -17,8 +17,12 @@ type SmartContract struct {
 type Fungus struct{
 	Name string			`json:"name"`
 	Dna uint			`json:"dna"`
-	ReadyTime uint32	`json:"readytime`
+	ReadyTime uint32	`json:"readytime"`
 }
+
+// Define key names for options
+const fungusCountKey = "fungusCount"
+
 
 //fungusToOwner (key:value) -> WSDB 
 //ownerFungusCount (key:value) -> WSDB 
@@ -31,12 +35,13 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 	if err != nil {
 		return false, fmt.Errorf("failed to get MSPID: %v", err)
 	}
+	// only Org1MSG members can call
 	if clientMSPID != "Org1MSP" {
 		return false, fmt.Errorf("client is not authorized to initialize contract")
 	}
 
 	// Check contract options are not already set, client is not authorized to change them once intitialized
-	bytes, err := ctx.GetStub().GetState("fungusCount")
+	bytes, err := ctx.GetStub().GetState(fungusCountKey)
 	if err != nil {
 		return false, fmt.Errorf("failed to get Name: %v", err)
 	}
@@ -44,7 +49,7 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 		return false, fmt.Errorf("contract options are already set, client is not authorized to change them")
 	}
 
-	err = ctx.GetStub().PutState("fungusCount", []byte(strconv.Itoa(0)))
+	err = ctx.GetStub().PutState(fungusCountKey, []byte(strconv.Itoa(0)))
 	if err != nil {
 		return false, fmt.Errorf("failed to set token name: %v", err)
 	}
@@ -59,9 +64,7 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 
 	// readytime
 	nowTime := time.Now()
-	unixTime := nowTime.Unix()
-
-	
+	unixTime := nowTime.Unix()	
 
 	// overwriting original asset with new asset
 	fungus := Fungus{
@@ -76,5 +79,5 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 
 	// create randDNA
 
-	return ctx.GetStub().PutState("id", assetJSON)
+	return ctx.GetStub().PutState(fungusCountKey+name, assetJSON)
 }
