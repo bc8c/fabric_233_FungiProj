@@ -25,5 +25,7 @@ type Fungus struct{
 func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, name string, dna uint) error {
 	// PutState Fungus in WSDB
 
+	// create randDNA
+
 	return ctx.GetStub().PutState(id, assetJSON)
 }
