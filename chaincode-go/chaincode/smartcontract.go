@@ -1,12 +1,13 @@
 package chaincode
 
 import (
-	"encoding/json"
-	"encoding/binary"
-	"time"
-	"fmt"
-	"strconv"
 	"crypto/sha256"
+	"encoding/binary"
+	"encoding/json"
+	"fmt"
+	"math"
+	"strconv"
+	"time"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -15,22 +16,25 @@ import (
 type SmartContract struct {
 	contractapi.Contract
 }
+
 // Fungus Asset describes basic details
-type Fungus struct{
-	FungusId uint		`json:"fungusid"`
-	Name string			`json:"name"`
-	Owner string		`json:"owner"`
-	Dna uint			`json:"dna"`
-	ReadyTime uint32	`json:"readytime"`
+type Fungus struct {
+	FungusId  uint   `json:"fungusid"`
+	Name      string `json:"name"`
+	Owner     string `json:"owner"`
+	Dna       uint   `json:"dna"`
+	ReadyTime uint32 `json:"readytime"`
 }
 
 // Define key names for options
 const fungusCountKey = "fungusCount"
 
+// Define const value for basic setting of contract
+const dnaDigits uint = 14
 
-//fungusToOwner (key:value) -> WSDB 
-//ownerFungusCount (key:value) -> WSDB 
-//fungusCount (key:value) -> WSDB 
+//fungusToOwner (key:value) -> WSDB
+//ownerFungusCount (key:value) -> WSDB
+//fungusCount (key:value) -> WSDB
 
 func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, name string, symbol string, decimals string) (bool, error) {
 
@@ -62,9 +66,8 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 	return true, nil
 }
 
-
 // CreateAsset issues a new asset to the world state with given details.
-func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, fungusid uint, name string, dna uint) error {
+func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, fungusid uint, name string) error {
 	// PutState Fungus in WSDB
 
 	// Check minter authorization - this sample assumes Org1 is the central banker with privilege to intitialize contract
@@ -75,34 +78,42 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 
 	// readytime
 	nowTime := time.Now()
-	unixTime := nowTime.Unix()	
-	
+	unixTime := nowTime.Unix()
+
 	// create randDNA
-	data := uint(unixTime)+fungusid
+	data := uint(unixTime) + fungusid
 	hash := sha256.New()
 	hash.Write([]byte(strconv.Itoa(int(data))))
-	hashDna := uint(binary.BigEndian.Uint64(hash.Sum(nil)))
-	// @need ( digit 14...... )
+	dnaHash := uint(binary.BigEndian.Uint64(hash.Sum(nil)))
 
-	
-	// hashDna := uint(hash.Sum(nil))
+	// make 14digits dna
+	dna := dnaHash % uint(math.Pow(10, float64(dnaDigits)))
+	dna = dna - dna%100
 
+	//TODO: How to make fungusid
+	//? ex> get the fungusCount using fungusCountKey ....
+	//? ex> make rand fungusid
+
+	//TODO: fungusid Duplicate check
 	// overwriting original fungus with new fungus
 	fungus := Fungus{
-		FungusId: 	fungusid,
-		Name:		name,
-		Owner:		clientID,
-		Dna:		hashDna,
-		ReadyTime:	uint32(unixTime),
+		FungusId:  fungusid,
+		Name:      name,
+		Owner:     clientID,
+		Dna:       dna,
+		ReadyTime: uint32(unixTime),
 	}
 	assetJSON, err := json.Marshal(fungus)
 	if err != nil {
 		return err
 	}
 
-	
+	return ctx.GetStub().PutState(strconv.Itoa(int(fungusid)), assetJSON)
 
-	return ctx.GetStub().PutState(fungusCountKey+name, assetJSON)
-	
-	
+}
+
+func (s *SmartContract) Testfunc(fungusid uint, name string) error {
+
+	return nil
+
 }
