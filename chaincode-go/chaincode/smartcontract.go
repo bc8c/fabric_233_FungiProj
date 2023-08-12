@@ -67,7 +67,7 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 }
 
 // CreateAsset issues a new asset to the world state with given details.
-func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, fungusid uint, name string) error {
+func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, name string) error {
 	// PutState Fungus in WSDB
 
 	// Check minter authorization - this sample assumes Org1 is the central banker with privilege to intitialize contract
@@ -79,6 +79,18 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 	// readytime
 	nowTime := time.Now()
 	unixTime := nowTime.Unix()
+	
+	// TODO: make a common getState func
+	//  How to make fungusid
+	fungusCountBytes, err := ctx.GetStub().GetState(fungusCountKey)
+	if err != nil {
+		return fmt.Errorf("failed to read from world state: %v", err)
+	}
+	if fungusCountBytes == nil {
+		return fmt.Errorf("the asset %s does not exist", fungusCountKey)
+	}
+	fungusidINT,_ := strconv.Atoi(string(fungusCountBytes))
+	fungusid := uint(fungusidINT)
 
 	// create randDNA
 	data := uint(unixTime) + fungusid
@@ -90,11 +102,6 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 	dna := dnaHash % uint(math.Pow(10, float64(dnaDigits)))
 	dna = dna - dna%100
 
-	//TODO: How to make fungusid
-	//? ex> get the fungusCount using fungusCountKey ....
-	//? ex> make rand fungusid
-
-	//TODO: fungusid Duplicate check
 	// overwriting original fungus with new fungus
 	fungus := Fungus{
 		FungusId:  fungusid,
