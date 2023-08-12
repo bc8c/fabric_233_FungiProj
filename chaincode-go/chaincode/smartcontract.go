@@ -49,11 +49,12 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 	}
 
 	// Check contract options are not already set, client is not authorized to change them once intitialized
-	bytes, err := ctx.GetStub().GetState(fungusCountKey)
+	fungusCount, err := ctx.GetStub().GetState(fungusCountKey)
+	
 	if err != nil {
 		return false, fmt.Errorf("failed to get Name: %v", err)
 	}
-	if bytes != nil {
+	if fungusCount != nil {
 		return false, fmt.Errorf("contract options are already set, client is not authorized to change them")
 	}
 
@@ -76,19 +77,17 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 		return fmt.Errorf("failed to get clientID: %v", err)
 	}
 
-	// readytime
+	// for readytime
 	nowTime := time.Now()
 	unixTime := nowTime.Unix()
 	
-	// TODO: make a common getState func
-	//  How to make fungusid
-	fungusCountBytes, err := ctx.GetStub().GetState(fungusCountKey)
+	//  make fungusid
+	fungusCountBytes, err := s._getState(ctx, fungusCountKey)
+	
 	if err != nil {
-		return fmt.Errorf("failed to read from world state: %v", err)
+		return err
 	}
-	if fungusCountBytes == nil {
-		return fmt.Errorf("the asset %s does not exist", fungusCountKey)
-	}
+	
 	fungusidINT,_ := strconv.Atoi(string(fungusCountBytes))
 	fungusid := uint(fungusidINT)
 
