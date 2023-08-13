@@ -113,10 +113,12 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 	if err != nil {
 		return err
 	}
-
+	// TODO : set the fungusCount
 	return ctx.GetStub().PutState(strconv.Itoa(int(fungusid)), assetJSON)
 
 }
+
+// TODO : make create randomDNA func.... and divid createFungus func
 
 func (s *SmartContract) Testfunc(fungusid uint, name string) error {
 
