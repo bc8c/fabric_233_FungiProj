@@ -76,6 +76,7 @@ func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInt
 	if err != nil {
 		return fmt.Errorf("failed to createFungus: %v", err)
 	}
+	return nil
 }
 
 // CreateAsset issues a new asset to the world state with given details.
@@ -151,13 +152,11 @@ func (S *SmartContract) _generateRandomDna(name string) uint {
 
 func (s *SmartContract) Testfunc(fungusId uint, name string) error {
 
-	// for readytime
-	nowTime := time.Now()
-	unixTime := nowTime.Unix()
+	ctx := new(contractapi.TransactionContext)
 
-	result := s._generateRandomDna(123412312,unixTime)
+	result := s.CreateRandomFungus(ctx, "toGold")
 	fmt.Println(result)
 
-	return nil
 
+	return nil
 }
