@@ -1,0 +1,5 @@
+	//? create randDNA
+	data := uint(unixTime) + name
+	hash := sha256.New()
+	hash.Write([]byte(strconv.Itoa(int(data))))
+	dnaHash := uint(binary.BigEndian.Uint64(hash.Sum(nil)))

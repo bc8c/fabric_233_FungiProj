@@ -67,8 +67,19 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 	return true, nil
 }
 
+// create a new fungus API
+func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInterface, name string) error{
+	// TODO: add exists Fungus check
+
+	dna:=s._generateRandomDna(name)
+	err := s._createFungus(ctx, name, dna)
+	if err != nil {
+		return fmt.Errorf("failed to createFungus: %v", err)
+	}
+}
+
 // CreateAsset issues a new asset to the world state with given details.
-func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface, name string) error {
+func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterface, name string, dna uint) error {
 	// PutState Fungus in WSDB
 
 	// Check minter authorization - this sample assumes Org1 is the central banker with privilege to intitialize contract
@@ -85,25 +96,17 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 	fungusCountBytes, err := s._getState(ctx, fungusCountKey)
 	
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get fungusCount: %v", err)
 	}
 	
-	fungusidINT,_ := strconv.Atoi(string(fungusCountBytes))
-	fungusid := uint(fungusidINT)
+	fungusIdINT,_ := strconv.Atoi(string(fungusCountBytes))
+	fungusId := uint(fungusIdINT)
 
-	// create randDNA
-	data := uint(unixTime) + fungusid
-	hash := sha256.New()
-	hash.Write([]byte(strconv.Itoa(int(data))))
-	dnaHash := uint(binary.BigEndian.Uint64(hash.Sum(nil)))
-
-	// make 14digits dna
-	dna := dnaHash % uint(math.Pow(10, float64(dnaDigits)))
-	dna = dna - dna%100
+	
 
 	// overwriting original fungus with new fungus
 	fungus := Fungus{
-		FungusId:  fungusid,
+		FungusId:  fungusId,
 		Name:      name,
 		Owner:     clientID,
 		Dna:       dna,
@@ -111,16 +114,49 @@ func (s *SmartContract) createFungus(ctx contractapi.TransactionContextInterface
 	}
 	assetJSON, err := json.Marshal(fungus)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal fungus: %v", err)
 	}
-	// TODO : set the fungusCount
-	return ctx.GetStub().PutState(strconv.Itoa(int(fungusid)), assetJSON)
+	
+	// PutState fungusId
+	ctx.GetStub().PutState(strconv.Itoa(int(fungusId)), assetJSON)
+	if err != nil {
+		return fmt.Errorf("failed to put fungus state: %v", err)
+	}
+
+	// PutState fungusCount++
+	fungusId += 1
+	ctx.GetStub().PutState(fungusCountKey, []byte(strconv.Itoa(int(fungusId))))
+	if err != nil {
+		return fmt.Errorf("failed to put fungusCount state: %v", err)
+	}
+
+	return nil
 
 }
 
-// TODO : make create randomDNA func.... and divid createFungus func
+func (S *SmartContract) _generateRandomDna(name string) uint {
+	nowTime := time.Now()
+	unixTime := nowTime.Unix()
+	data := strconv.Itoa(int(unixTime)) + name
+	hash := sha256.New()
+	hash.Write([]byte(data))
+	dnaHash := uint(binary.BigEndian.Uint64(hash.Sum(nil)))
 
-func (s *SmartContract) Testfunc(fungusid uint, name string) error {
+	// make 14digits dna
+	dna := dnaHash % uint(math.Pow(10, float64(dnaDigits)))
+	dna = dna - dna%100
+
+	return dna
+}
+
+func (s *SmartContract) Testfunc(fungusId uint, name string) error {
+
+	// for readytime
+	nowTime := time.Now()
+	unixTime := nowTime.Unix()
+
+	result := s._generateRandomDna(123412312,unixTime)
+	fmt.Println(result)
 
 	return nil
 
