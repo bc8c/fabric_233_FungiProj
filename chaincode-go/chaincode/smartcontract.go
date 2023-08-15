@@ -70,9 +70,22 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 // create a new fungus API
 func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInterface, name string) error{
 	// TODO: add exists Fungus check
+	// Check ClientId
+	clientID, err := ctx.GetClientIdentity().GetID()
+	if err != nil {
+		return fmt.Errorf("failed to get clientID: %v", err)
+	}
+
+	exists, err := s._assetExists(ctx, clientID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return fmt.Errorf("client has already created an initial fungus")
+	}
 
 	dna:=s._generateRandomDna(name)
-	err := s._createFungus(ctx, name, dna)
+	err = s._createFungus(ctx, name, dna)
 	if err != nil {
 		return fmt.Errorf("failed to createFungus: %v", err)
 	}
@@ -83,7 +96,7 @@ func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInt
 func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterface, name string, dna uint) error {
 	// PutState Fungus in WSDB
 
-	// Check minter authorization - this sample assumes Org1 is the central banker with privilege to intitialize contract
+	// Check ClientId
 	clientID, err := ctx.GetClientIdentity().GetID()
 	if err != nil {
 		return fmt.Errorf("failed to get clientID: %v", err)
@@ -94,16 +107,13 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 	unixTime := nowTime.Unix()
 	
 	//  make fungusid
-	fungusCountBytes, err := s._getState(ctx, fungusCountKey)
-	
+	fungusCountBytes, err := s._getState(ctx, fungusCountKey)	
 	if err != nil {
 		return fmt.Errorf("failed to get fungusCount: %v", err)
 	}
-	
+
 	fungusIdINT,_ := strconv.Atoi(string(fungusCountBytes))
 	fungusId := uint(fungusIdINT)
-
-	
 
 	// overwriting original fungus with new fungus
 	fungus := Fungus{
