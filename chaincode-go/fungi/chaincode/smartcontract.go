@@ -18,23 +18,17 @@ type SmartContract struct {
 }
 
 // Fungus Asset describes basic details
-type Fungus struct {
-	FungusId  uint   `json:"fungusid"`
+type Feed struct {
+	FeedId  uint   `json:"fungusid"`
 	Name      string `json:"name"`
-	Owner     string `json:"owner"`
 	Dna       uint   `json:"dna"`
-	ReadyTime uint32 `json:"readytime"`
 }
 
 // Define key names for options
-const fungusCountKey = "fungusCount" // the ​total number of fungi
+const feedCountKey = "feedCount" // the ​total number of fungi
 
 // Define const value for basic setting of contract
 const dnaDigits uint = 14
-
-//fungusToOwner (key:value) -> WSDB
-//ownerFungusCount (key:value) -> WSDB
-//fungusCount (key:value) -> WSDB
 
 func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface) (bool, error) {
 
@@ -44,12 +38,12 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface) 
 		return false, fmt.Errorf("failed to get MSPID: %v", err)
 	}
 	// only Org1MSG members can call
-	if clientMSPID != "Org1MSP" {
+	if clientMSPID != "Org2MSP" {
 		return false, fmt.Errorf("client is not authorized to initialize contract")
 	}
 
 	// Check contract options are not already set, client is not authorized to change them once intitialized
-	fungusCount, err := ctx.GetStub().GetState(fungusCountKey)
+	fungusCount, err := ctx.GetStub().GetState(feedCountKey)
 	
 	if err != nil {
 		return false, fmt.Errorf("failed to get Name: %v", err)
@@ -59,14 +53,14 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface) 
 	}
 
 	// Initialize FungusCountKey to zero(0)
-	err = ctx.GetStub().PutState(fungusCountKey, []byte(strconv.Itoa(0)))
+	err = ctx.GetStub().PutState(feedCountKey, []byte(strconv.Itoa(0)))
 	if err != nil {
 		return false, fmt.Errorf("failed to set token name: %v", err)
 	}
 
 	return true, nil
 }
-
+// TODO: mod feedFactory function
 // create a new fungus API
 func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInterface, name string) error{
 	// Check ClientId
