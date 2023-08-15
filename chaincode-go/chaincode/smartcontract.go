@@ -139,13 +139,7 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 	}
 
 	//  update ownerFungusCount
-	countByte, err := s._getState(ctx, clientID)	
-	if err != nil {
-		return fmt.Errorf("failed to get fungusCount: %v", err)
-	}
-	ownerFungusCount,_ := strconv.Atoi(string(countByte[:]))
-	ownerFungusCount ++
-	ctx.GetStub().PutState(clientID, []byte(strconv.Itoa(ownerFungusCount)))
+	err = s._updateOwnerFungusCount(ctx, clientID, -1)
 	if err != nil {
 		return fmt.Errorf("failed to put fungus state: %v", err)
 	}
@@ -169,15 +163,11 @@ func (S *SmartContract) _generateRandomDna(name string) uint {
 	return dna
 }
 
-func (S *SmartContract) GetFungiByOwner(clientId string)
+// func (S *SmartContract) GetFungiByOwner(clientId string)
 
 func (s *SmartContract) Testfunc(fungusId uint, name string) error {
 
-	ctx := new(contractapi.TransactionContext)
-
-	result := s.CreateRandomFungus(ctx, "toGold")
-	fmt.Println(result)
-
+	// s.Testfunc2(-1)
 
 	return nil
 }

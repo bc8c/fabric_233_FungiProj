@@ -2,6 +2,7 @@ package chaincode
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -25,4 +26,18 @@ func (s *SmartContract) _assetExists(ctx contractapi.TransactionContextInterface
 	}
 
 	return assetJSON != nil, nil
+}
+
+func (s *SmartContract) _updateOwnerFungusCount(ctx contractapi.TransactionContextInterface, clientID string, increment int) error {
+	countByte, err := s._getState(ctx, clientID)	
+	if err != nil {
+		return fmt.Errorf("failed to get fungusCount: %v", err)
+	}
+	ownerFungusCount,_ := strconv.Atoi(string(countByte[:]))
+	ownerFungusCount += increment
+	ctx.GetStub().PutState(clientID, []byte(strconv.Itoa(ownerFungusCount)))
+	if err != nil {
+		return fmt.Errorf("failed to put fungus state: %v", err)
+	}
+	return nil
 }
