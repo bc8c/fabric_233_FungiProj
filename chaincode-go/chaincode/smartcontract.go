@@ -27,7 +27,7 @@ type Fungus struct {
 }
 
 // Define key names for options
-const fungusCountKey = "fungusCount"
+const fungusCountKey = "fungusCount" // the ​total number of fungi
 
 // Define const value for basic setting of contract
 const dnaDigits uint = 14
@@ -69,7 +69,6 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 
 // create a new fungus API
 func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInterface, name string) error{
-	// TODO: add exists Fungus check
 	// Check ClientId
 	clientID, err := ctx.GetClientIdentity().GetID()
 	if err != nil {
@@ -94,7 +93,6 @@ func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInt
 
 // CreateAsset issues a new asset to the world state with given details.
 func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterface, name string, dna uint) error {
-	// PutState Fungus in WSDB
 
 	// Check ClientId
 	clientID, err := ctx.GetClientIdentity().GetID()
@@ -111,7 +109,6 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 	if err != nil {
 		return fmt.Errorf("failed to get fungusCount: %v", err)
 	}
-
 	fungusIdINT,_ := strconv.Atoi(string(fungusCountBytes))
 	fungusId := uint(fungusIdINT)
 
@@ -141,10 +138,22 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 		return fmt.Errorf("failed to put fungusCount state: %v", err)
 	}
 
-	return nil
+	//  update ownerFungusCount
+	countByte, err := s._getState(ctx, clientID)	
+	if err != nil {
+		return fmt.Errorf("failed to get fungusCount: %v", err)
+	}
+	ownerFungusCount,_ := strconv.Atoi(string(countByte[:]))
+	ownerFungusCount ++
+	ctx.GetStub().PutState(clientID, []byte(strconv.Itoa(ownerFungusCount)))
+	if err != nil {
+		return fmt.Errorf("failed to put fungus state: %v", err)
+	}
 
+	return nil
 }
 
+// generate random dna func
 func (S *SmartContract) _generateRandomDna(name string) uint {
 	nowTime := time.Now()
 	unixTime := nowTime.Unix()
@@ -159,6 +168,8 @@ func (S *SmartContract) _generateRandomDna(name string) uint {
 
 	return dna
 }
+
+func (S *SmartContract) GetFungiByOwner(clientId string)
 
 func (s *SmartContract) Testfunc(fungusId uint, name string) error {
 
