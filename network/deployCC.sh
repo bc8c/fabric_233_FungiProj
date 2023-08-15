@@ -20,8 +20,8 @@ export FABRIC_CFG_PATH=${PWD}/config
 # Chaincode config variable
 
 # CHANNEL_NAME="mychannel"
-CC_NAME="basic"
-CC_SRC_PATH="../test-cc"
+CC_NAME="fungi"
+CC_SRC_PATH="../chaincode-go"
 CC_RUNTIME_LANGUAGE="golang"
 CC_VERSION="1"
 CHANNEL_NAME="mychannel"
@@ -155,17 +155,17 @@ cat log.txt
 peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name ${CC_NAME} --cafile $ORDERER_CA
 
 
-## TEST1 : Invoking the chaincode
-infoln "TEST1 : Invoking the chaincode"
-set -x
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"InitLedger","Args":[]}' >&log.txt
-{ set +x; } 2>/dev/null
-cat log.txt
-sleep 3
+# ## TEST1 : Invoking the chaincode
+# infoln "TEST1 : Invoking the chaincode"
+# set -x
+# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"InitLedger","Args":[]}' >&log.txt
+# { set +x; } 2>/dev/null
+# cat log.txt
+# sleep 3
 
-## TEST2 : Query the chaincode
-infoln "TEST2 : Query the chaincode"
-set -x
-peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["GetAllAssets"]}' >&log.txt
-{ set +x; } 2>/dev/null
-cat log.txt
+# ## TEST2 : Query the chaincode
+# infoln "TEST2 : Query the chaincode"
+# set -x
+# peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["GetAllAssets"]}' >&log.txt
+# { set +x; } 2>/dev/null
+# cat log.txt

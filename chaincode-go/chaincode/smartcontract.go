@@ -36,7 +36,7 @@ const dnaDigits uint = 14
 //ownerFungusCount (key:value) -> WSDB
 //fungusCount (key:value) -> WSDB
 
-func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, name string, symbol string, decimals string) (bool, error) {
+func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface) (bool, error) {
 
 	// Check minter authorization - this sample assumes Org1 is the central banker with privilege to intitialize contract
 	clientMSPID, err := ctx.GetClientIdentity().GetMSPID()
@@ -82,6 +82,10 @@ func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInt
 	if exists {
 		return fmt.Errorf("client has already created an initial fungus")
 	}
+	ctx.GetStub().PutState(clientId, []byte(strconv.Itoa(0)))
+	if err != nil {
+		return fmt.Errorf("failed to put fungus state: %v", err)
+	}
 
 	dna:=s._generateRandomDna(name)
 	err = s._createFungus(ctx, name, dna)
@@ -126,14 +130,14 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 	}
 	
 	// PutState fungusId
-	ctx.GetStub().PutState(strconv.Itoa(int(fungusId)), assetJSON)
+	err = ctx.GetStub().PutState(strconv.Itoa(int(fungusId)), assetJSON)
 	if err != nil {
 		return fmt.Errorf("failed to put fungus state: %v", err)
 	}
 
 	// PutState fungusCount++
 	fungusId += 1
-	ctx.GetStub().PutState(fungusCountKey, []byte(strconv.Itoa(int(fungusId))))
+	err = ctx.GetStub().PutState(fungusCountKey, []byte(strconv.Itoa(int(fungusId))))
 	if err != nil {
 		return fmt.Errorf("failed to put fungusCount state: %v", err)
 	}
@@ -163,9 +167,6 @@ func (S *SmartContract) _generateRandomDna(name string) uint {
 	return dna
 }
 
-// TODO: change Owner check using CompositeKey
-// ? nftKey, err := ctx.GetStub().CreateCompositeKey(nftPrefix, []string{tokenId})
-// ? ctx.GetStub().GetStateByPartialCompositeKey(nftPrefix, []string{})
 func (S *SmartContract) GetFungiByOwner(ctx contractapi.TransactionContextInterface) ([]*Fungus, error){
 	// Check ClientId
 	clientId, err := ctx.GetClientIdentity().GetID()

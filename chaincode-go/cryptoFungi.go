@@ -5,20 +5,23 @@ SPDX-License-Identifier: Apache-2.0
 package main
 
 import (
+	"log"
+	
 	"cryptoFungi/chaincode"
+	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 func main() {
-	// assetChaincode, err := contractapi.NewChaincode(&chaincode.SmartContract{})
-	// if err != nil {
-	// 	log.Panicf("Error creating asset-transfer-basic chaincode: %v", err)
-	// }
+	assetChaincode, err := contractapi.NewChaincode(&chaincode.SmartContract{})
+	if err != nil {
+		log.Panicf("Error creating asset-transfer-basic chaincode: %v", err)
+	}
 
-	// if err := assetChaincode.Start(); err != nil {
-	// 	log.Panicf("Error starting asset-transfer-basic chaincode: %v", err)
-	// }
+	if err := assetChaincode.Start(); err != nil {
+		log.Panicf("Error starting asset-transfer-basic chaincode: %v", err)
+	}
 
-	TestSC := chaincode.SmartContract{}
-	TestSC.Testfunc(1, "TestFungus")
+	// TestSC := chaincode.SmartContract{}
+	// TestSC.Testfunc(1, "TestFungus")
 
 }

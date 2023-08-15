@@ -14,7 +14,7 @@ func (s *SmartContract) _getState(ctx contractapi.TransactionContextInterface, i
 		return nil, fmt.Errorf("failed to read from world state: %v", err)
 	}
 	if assetJSON == nil {
-		return nil, fmt.Errorf("the asset %s does not exist", fungusCountKey)
+		return nil, fmt.Errorf("the asset %s does not exist", id)
 	}
 	return assetJSON, nil
 }
@@ -30,8 +30,12 @@ func (s *SmartContract) _assetExists(ctx contractapi.TransactionContextInterface
 
 func (s *SmartContract) _updateOwnerFungusCount(ctx contractapi.TransactionContextInterface, clientID string, increment int) error {
 	countByte, err := s._getState(ctx, clientID)	
+	if countByte == nil {
+		ctx.GetStub().PutState(clientID, []byte(strconv.Itoa(1)))
+		return nil
+	}
 	if err != nil {
-		return fmt.Errorf("failed to get fungusCount: %v", err)
+		return fmt.Errorf("failed to get fungusToOwner: %v", err)
 	}
 	ownerFungusCount,_ := strconv.Atoi(string(countByte[:]))
 	ownerFungusCount += increment
