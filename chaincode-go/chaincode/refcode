@@ -3,3 +3,54 @@
 	hash := sha256.New()
 	hash.Write([]byte(strconv.Itoa(int(data))))
 	dnaHash := uint(binary.BigEndian.Uint64(hash.Sum(nil)))
+
+
+	-------------------------------------------------------------------------------------
+	// make compositeKey and putState
+	nftKey, err := ctx.GetStub().CreateCompositeKey(nftPrefix, []string{tokenId})
+	if err != nil {
+		return nil, fmt.Errorf("failed to CreateCompositeKey to nftKey: %v", err)
+	}
+	err = ctx.GetStub().PutState(nftKey, nftBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to PutState nftBytes %s: %v", nftBytes, err)
+	}
+
+	-------------------------------------------------------------------------------------
+
+	iterator, err := ctx.GetStub().GetStateByPartialCompositeKey(balancePrefix, []string{owner})
+	if err != nil {
+		panic("Error creating asset chaincode:" + err.Error())
+	}
+
+	// Count the number of returned composite keys
+	balance := 0
+	for iterator.HasNext() {
+		_, err := iterator.Next()
+		if err != nil {
+			return 0
+		}
+		balance++
+
+	}
+	return balance
+
+	-------------------------------------------------------------------------------------
+
+	// get totalSupply using compositeKey
+	iterator, err := ctx.GetStub().GetStateByPartialCompositeKey(nftPrefix, []string{})
+	if err != nil {
+		panic("Error creating GetStateByPartialCompositeKey:" + err.Error())
+	}
+	// Count the number of returned composite keys
+	totalSupply := 0
+	for iterator.HasNext() {
+		_, err := iterator.Next()
+		if err != nil {
+			return 0
+		}
+		totalSupply++
+
+	}
+	return totalSupply
+	-------------------------------------------------------------------------------------

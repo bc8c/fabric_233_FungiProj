@@ -163,6 +163,9 @@ func (S *SmartContract) _generateRandomDna(name string) uint {
 	return dna
 }
 
+// TODO: change Owner check using CompositeKey
+// ? nftKey, err := ctx.GetStub().CreateCompositeKey(nftPrefix, []string{tokenId})
+// ? ctx.GetStub().GetStateByPartialCompositeKey(nftPrefix, []string{})
 func (S *SmartContract) GetFungiByOwner(ctx contractapi.TransactionContextInterface) ([]*Fungus, error){
 	// Check ClientId
 	clientId, err := ctx.GetClientIdentity().GetID()
