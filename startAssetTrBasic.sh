@@ -12,8 +12,4 @@ sleep 5
 
 ./setAnchorPeerUpdate.sh
 
-sleep 5
-
-./deployCC.sh
-
 popd

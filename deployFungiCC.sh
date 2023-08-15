@@ -21,7 +21,7 @@ export FABRIC_CFG_PATH=${PWD}/network/config
 
 # CHANNEL_NAME="mychannel"
 CC_NAME="fungi"
-CC_SRC_PATH="./chaincode-go"
+CC_SRC_PATH="./chaincode-go/fungi"
 CC_RUNTIME_LANGUAGE="golang"
 CC_VERSION=$1
 CHANNEL_NAME="mychannel"
