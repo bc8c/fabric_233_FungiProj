@@ -70,12 +70,12 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface, 
 // create a new fungus API
 func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInterface, name string) error{
 	// Check ClientId
-	clientID, err := ctx.GetClientIdentity().GetID()
+	clientId, err := ctx.GetClientIdentity().GetID()
 	if err != nil {
-		return fmt.Errorf("failed to get clientID: %v", err)
+		return fmt.Errorf("failed to get clientId: %v", err)
 	}
 
-	exists, err := s._assetExists(ctx, clientID)
+	exists, err := s._assetExists(ctx, clientId)
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,35 @@ func (S *SmartContract) _generateRandomDna(name string) uint {
 	return dna
 }
 
-// func (S *SmartContract) GetFungiByOwner(clientId string)
+func (S *SmartContract) GetFungiByOwner(ctx contractapi.TransactionContextInterface) ([]*Fungus, error){
+	// Check ClientId
+	clientId, err := ctx.GetClientIdentity().GetID()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get clientID: %v", err)
+	}
+	queryString := fmt.Sprintf(`{"selector":{"owner":"%s"}}`, clientId)
+
+	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+
+	var fungi []*Fungus
+	for resultsIterator.HasNext() {
+		queryResult, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var fungus Fungus
+		err = json.Unmarshal(queryResult.Value, &fungus)
+		if err != nil {
+			return nil, err
+		}
+		fungi = append(fungi, &fungus)
+	}
+	return fungi, nil
+}
 
 func (s *SmartContract) Testfunc(fungusId uint, name string) error {
 
