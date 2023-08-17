@@ -1,3 +1,0 @@
-[34m2023-08-17 11:18:49.020 UTC [chaincodeCmd] ClientWait -> INFO 001[0m txid [5848972a53763daea21fc0d3e5a7444569b7f89a309db9751f5ba5bd2d69b4b2] committed with status (VALID) at localhost:9051
-[34m2023-08-17 11:18:49.147 UTC [chaincodeCmd] ClientWait -> INFO 002[0m txid [5848972a53763daea21fc0d3e5a7444569b7f89a309db9751f5ba5bd2d69b4b2] committed with status (VALID) at localhost:7051
-[34m2023-08-17 11:18:49.242 UTC [chaincodeCmd] ClientWait -> INFO 003[0m txid [5848972a53763daea21fc0d3e5a7444569b7f89a309db9751f5ba5bd2d69b4b2] committed with status (VALID) at localhost:11051
