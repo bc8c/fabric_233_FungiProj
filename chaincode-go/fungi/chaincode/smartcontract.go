@@ -196,10 +196,3 @@ func (S *SmartContract) GetFungiByOwner(ctx contractapi.TransactionContextInterf
 	}
 	return fungi, nil
 }
-
-func (s *SmartContract) Testfunc(fungusId uint, name string) error {
-
-	// s.Testfunc2(-1)
-
-	return nil
-}
