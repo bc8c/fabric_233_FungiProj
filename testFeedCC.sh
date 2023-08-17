@@ -40,10 +40,29 @@ cat log.txt
 sleep 3
 
 
-## TEST2 : Invoking the chaincode
+## TEST1 : Invoking the chaincode
 infoln "TEST1-2 : Invoking the chaincode (Initialize)"
 set -x
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"Initialize","Args":[]}' >&log.txt
+{ set +x; } 2>/dev/null
+cat log.txt
+sleep 3
+
+
+## TEST2 : Invoking the chaincode
+infoln "TEST1-2 : Invoking the chaincode (CreateRandomFeed)"
+set -x
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"CreateRandomFeed","Args":["TestFeed1"]}' >&log.txt
+{ set +x; } 2>/dev/null
+cat log.txt
+sleep 3
+
+
+# GetFeed(ctx contractapi.TransactionContextInterface, feedId uint)
+## TEST3 : Invoking the chaincode
+infoln "TEST1-2 : Invoking the chaincode (GetFeed)"
+set -x
+peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function":"GetFeed","Args":["0"]}' >&log.txt
 { set +x; } 2>/dev/null
 cat log.txt
 sleep 3
