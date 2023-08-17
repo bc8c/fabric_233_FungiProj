@@ -63,23 +63,6 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface) 
 
 // create a new fungus API
 func (s *SmartContract) CreateRandomFeed(ctx contractapi.TransactionContextInterface, name string) error {
-	// // Check ClientId
-	// clientId, err := ctx.GetClientIdentity().GetID()
-	// if err != nil {
-	// 	return fmt.Errorf("failed to get clientId: %v", err)
-	// }
-
-	// exists, err := s._assetExists(ctx, clientId)
-	// if err != nil {
-	// 	return err
-	// }
-	// if exists {
-	// 	return fmt.Errorf("client has already created an initial fungus")
-	// }
-	// ctx.GetStub().PutState(clientId, []byte(strconv.Itoa(0)))
-	// if err != nil {
-	// 	return fmt.Errorf("failed to put fungus state: %v", err)
-	// }
 
 	dna := s._generateRandomDna(name)
 	err := s._createFeeds(ctx, name, dna)
@@ -91,16 +74,6 @@ func (s *SmartContract) CreateRandomFeed(ctx contractapi.TransactionContextInter
 
 // CreateAsset issues a new asset to the world state with given details.
 func (s *SmartContract) _createFeeds(ctx contractapi.TransactionContextInterface, name string, dna uint) error {
-
-	// // Check ClientId
-	// clientID, err := ctx.GetClientIdentity().GetID()
-	// if err != nil {
-	// 	return fmt.Errorf("failed to get clientID: %v", err)
-	// }
-
-	// // for readytime
-	// nowTime := time.Now()
-	// unixTime := nowTime.Unix()
 
 	//  make feedId
 	feedsCountBytes, err := s._getState(ctx, feedsCountKey)
@@ -165,11 +138,4 @@ func (S *SmartContract) GetFeed(ctx contractapi.TransactionContextInterface, fee
 	}
 
 	return &feed, nil
-}
-
-func (s *SmartContract) Testfunc(fungusId uint, name string) error {
-
-	// s.Testfunc2(-1)
-
-	return nil
 }
