@@ -1,4 +1,4 @@
-module cryptoFungi
+module feedFactory
 
 go 1.14
 
