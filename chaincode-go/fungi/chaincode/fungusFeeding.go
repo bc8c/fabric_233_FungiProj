@@ -1,14 +1,15 @@
 package chaincode
 
 import (
+	"strconv"
 	"fmt"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 
-func (s *SmartContract)Feed(ctx contractapi.TransactionContextInterface) error{
-	params := []string{"GetFeed", "0"}
+func (s *SmartContract)Feed(ctx contractapi.TransactionContextInterface, feedId uint) ([]byte,error){
+	params := []string{"GetFeed", strconv.Itoa(int(feedId))}
 	invokeargs := make([][]byte, len(params))
 	for i, arg := range params {
 		invokeargs[i] = []byte(arg)
@@ -16,7 +17,7 @@ func (s *SmartContract)Feed(ctx contractapi.TransactionContextInterface) error{
 
 	respons := ctx.GetStub().InvokeChaincode("feed", invokeargs, "mychannel")
 	if respons.Status != 200 {
-		return fmt.Errorf("failed to InvokeChaincode: %s", respons.Payload)
+		return nil,fmt.Errorf("failed to InvokeChaincode: %s", respons.Payload)
 	}
-	return nil
+	return respons.Payload, nil
 }
