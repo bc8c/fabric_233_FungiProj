@@ -60,7 +60,6 @@ func (s *SmartContract) Initialize(ctx contractapi.TransactionContextInterface) 
 
 	return true, nil
 }
-// TODO: mod feedFactory function
 // create a new fungus API
 func (s *SmartContract) CreateRandomFungus(ctx contractapi.TransactionContextInterface, name string) error{
 	// Check ClientId
