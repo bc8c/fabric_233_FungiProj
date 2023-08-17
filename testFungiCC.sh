@@ -64,7 +64,7 @@ cat log.txt
 ## TEST4 : Query the chaincode
 infoln "TEST4-1 : Query the chaincode (Feed)"
 set -x
-peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["Feed","0"]}' >&log.txt
+peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"function":"Feed","Args":["0"]}' >&log.txt
 { set +x; } 2>/dev/null
 cat log.txt
 
