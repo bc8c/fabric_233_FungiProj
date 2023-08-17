@@ -1,1 +1,3 @@
-[{"fungusid":0,"name":"TestFungus1","owner":"eDUwOTo6Q049b3JnMWFkbWluLE9VPWFkbWluLE89SHlwZXJsZWRnZXIsU1Q9Tm9ydGggQ2Fyb2xpbmEsQz1VUzo6Q049ZmFicmljLWNhLXNlcnZlcixPVT1GYWJyaWMsTz1IeXBlcmxlZGdlcixTVD1Ob3J0aCBDYXJvbGluYSxDPVVT","dna":25490809428400,"readytime":1692269700}]
+[34m2023-08-17 11:18:49.020 UTC [chaincodeCmd] ClientWait -> INFO 001[0m txid [5848972a53763daea21fc0d3e5a7444569b7f89a309db9751f5ba5bd2d69b4b2] committed with status (VALID) at localhost:9051
+[34m2023-08-17 11:18:49.147 UTC [chaincodeCmd] ClientWait -> INFO 002[0m txid [5848972a53763daea21fc0d3e5a7444569b7f89a309db9751f5ba5bd2d69b4b2] committed with status (VALID) at localhost:7051
+[34m2023-08-17 11:18:49.242 UTC [chaincodeCmd] ClientWait -> INFO 003[0m txid [5848972a53763daea21fc0d3e5a7444569b7f89a309db9751f5ba5bd2d69b4b2] committed with status (VALID) at localhost:11051
