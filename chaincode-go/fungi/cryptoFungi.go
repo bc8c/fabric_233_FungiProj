@@ -20,8 +20,4 @@ func main() {
 	if err := assetChaincode.Start(); err != nil {
 		log.Panicf("Error starting asset-transfer-basic chaincode: %v", err)
 	}
-
-	// TestSC := chaincode.SmartContract{}
-	// TestSC.Testfunc(1, "TestFungus")
-
 }
