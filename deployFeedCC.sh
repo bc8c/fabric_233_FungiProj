@@ -20,7 +20,7 @@ export FABRIC_CFG_PATH=${PWD}/network/config
 # Chaincode config variable
 
 # CHANNEL_NAME="mychannel"
-CC_NAME="Feed"
+CC_NAME="feed"
 CC_SRC_PATH="./chaincode-go/feed"
 CC_RUNTIME_LANGUAGE="golang"
 CC_VERSION=$1
