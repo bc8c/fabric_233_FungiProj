@@ -8,7 +8,7 @@ import (
 )
 
 
-func (s *SmartContract)Feed(ctx contractapi.TransactionContextInterface, feedId uint) ([]byte,error){
+func (s *SmartContract)Feed(ctx contractapi.TransactionContextInterface, feedId uint) (string,error){
 	params := []string{"GetFeed", strconv.Itoa(int(feedId))}
 	invokeargs := make([][]byte, len(params))
 	for i, arg := range params {
@@ -17,7 +17,7 @@ func (s *SmartContract)Feed(ctx contractapi.TransactionContextInterface, feedId 
 
 	respons := ctx.GetStub().InvokeChaincode("feed", invokeargs, "mychannel")
 	if respons.Status != 200 {
-		return nil,fmt.Errorf("failed to InvokeChaincode: %s", respons.Payload)
+		return "",fmt.Errorf("failed to InvokeChaincode: %s", respons.Payload)
 	}
-	return []byte(respons.Payload), nil
+	return string(respons.Payload), nil
 }
