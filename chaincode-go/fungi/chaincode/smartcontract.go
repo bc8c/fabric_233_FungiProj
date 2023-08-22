@@ -122,7 +122,7 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 		Name:      name,
 		Owner:     clientID,
 		Dna:       dna,
-		ReadyTime: uint32(unixTime),
+		ReadyTime: uint32(unixTime)+60,
 	}
 	assetJSON, err := json.Marshal(fungus)
 	if err != nil {
