@@ -46,18 +46,26 @@ sleep 3
 # { set +x; } 2>/dev/null
 # cat log.txt
 
-## TEST2 : Invoking the chaincode
-infoln "TEST2-1 : Invoking the chaincode (CreateRandomFungus)"
-set -x
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"CreateRandomFungus","Args":["TestFungus1"]}' >&log.txt
-{ set +x; } 2>/dev/null
-cat log.txt
-sleep 3
+# ## TEST2 : Invoking the chaincode
+# infoln "TEST2 : Invoking the chaincode (CreateRandomFungus)"
+# set -x
+# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"CreateRandomFungus","Args":["TestFungus1"]}' >&log.txt
+# { set +x; } 2>/dev/null
+# cat log.txt
+# sleep 3
 
 ## TEST3 : Query the chaincode
-infoln "TEST2 : Query the chaincode (GetFungiByOwner)"
+infoln "TEST3 : Query the chaincode (GetFungiByOwner)"
 set -x
 peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["GetFungiByOwner"]}' >&log.txt
 { set +x; } 2>/dev/null
 cat log.txt
+
+## TEST4 : Query the chaincode
+infoln "TEST4-2 : Invoking the chaincode (Feed)"
+set -x
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"Feed","Args":["0","0"]}' >&log.txt
+{ set +x; } 2>/dev/null
+cat log.txt
+sleep 3
 
