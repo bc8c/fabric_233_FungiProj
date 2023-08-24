@@ -143,7 +143,7 @@ func (s *SmartContract) _createFungus(ctx contractapi.TransactionContextInterfac
 	}
 
 	//  update ownerFungusCount
-	err = s._updateOwnerFungusCount(ctx, clientID, -1)
+	err = s._updateOwnerFungusCount(ctx, clientID, 1)
 	if err != nil {
 		return fmt.Errorf("failed to put fungus state: %v", err)
 	}
