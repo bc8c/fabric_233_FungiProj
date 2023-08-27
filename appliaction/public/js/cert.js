@@ -3,7 +3,9 @@ const fs = require("fs");
 
 // connection.json 객체화
 const ccpPath = path.resolve(__dirname, "..", "ccp", "connection-org1.json");
+const ccpPath2 = path.resolve(__dirname, "..", "ccp", "connection-org2.json");
 const ccp = JSON.parse(fs.readFileSync(ccpPath, "utf8"));
+const ccp2 = JSON.parse(fs.readFileSync(ccpPath2, "utf8"));
 const FabricCAServices = require("fabric-ca-client");
 const { Wallets } = require("fabric-network");
 
@@ -57,7 +59,7 @@ async function makeAdminWallet() {
     }
 }
 
-async function makeUserWallet(id) {
+async function makeUserWallet(id,mspId) {
 
     // const id = req.body.id;
     const userrole = "client";
@@ -111,7 +113,7 @@ async function makeUserWallet(id) {
                 certificate: enrollment.certificate,
                 privateKey: enrollment.key.toBytes(),
             },
-            mspId: "Org1MSP",
+            mspId: mspId,
             type: "X.509",
         };
         await wallet.put(id, x509Identity);
@@ -119,7 +121,7 @@ async function makeUserWallet(id) {
         // response to client
         console.log('Successfully registered and enrolled admin user "appUser" and imported it into the wallet');
     } catch (error) {
-        console.error(`Failed to enroll admin user ${id}`);
+        console.error(`Failed to enroll admin user ${id} : ${error}`);
     }
 }
 

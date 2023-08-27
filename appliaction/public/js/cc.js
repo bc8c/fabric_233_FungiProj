@@ -4,15 +4,10 @@ const fs = require("fs");
 // connection.json 객체화
 const ccpPath = path.resolve(__dirname, "..", "ccp", "connection-org1.json");
 const ccp = JSON.parse(fs.readFileSync(ccpPath, "utf8"));
-const FabricCAServices = require("fabric-ca-client");
 const { Wallets, Gateway  } = require("fabric-network");
 
-// async function makeAdminWallet() {
-
-// }
 
 async function cc_call(id, fn_name, args) {
-
     try {
         const walletPath = path.join(process.cwd(), "wallet");
         console.log(`Wallet path in cc_call: ${walletPath}`);
