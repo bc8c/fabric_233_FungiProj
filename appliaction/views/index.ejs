@@ -8,14 +8,46 @@
   </head>
   <body>
     <h1><%= title %></h1>
+    <a href="/logout">logout</a>
     <p>Welcome to <%= title %></p>
     
-    <% if(result == ""){ %>
+    <% if(result == "feed"){ %>
+      <a href="/createFeed" class="btn btn-primary">먹이생성</a>
+    <% } else if (result == "") { %>    
       <a href="/createFungus" class="btn btn-primary">버섯생성</a>
     <% } else { %>
-      <p><%= result %></p>
-    <% } %>
-    <a href="/logout">logout</a>
+      <div class="container">
+        <div class="row row-cols-auto">
+          <% const fungi = JSON.parse(result) %>
+          <% for (var i = 0; i < fungi.length; i++) { %>            
+          <% var date = new Date(fungi[i].readytime * 1000 + 9 * 60 * 60 * 1000)%>            
+            <div class="col">            
+              <div class="card" style="width: 20rem;">
+                <div class="card-body">
+                  <h5 class="card-title"><%= fungi[i].name %></h5>
+                  <p class="card-text"> 버섯ID : <%= fungi[i].fungusid %></p>
+                  <p class="card-text"> dna : <%= fungi[i].dna %></p>
+                  <p class="card-text"> 증식가능시간 : <%= date.toLocaleTimeString("ko-KR")%></p>
+                  <p class="card-text"> 소유주 : <%= fungi[i].owner %></p>
+                  <div class="card-header">
+                    <h5>버섯증식하기</h5>
+                    <form action="/createFungus/feed" method="post">  
+                      <input type="hidden" name="fungusid" class="form-control" value= <%= fungi[i].fungusid %>>
+                      <label> 먹이ID :  </label>
+                      <input type="text" name="feedid" class="form-control"><br>
+                      <input type="submit" value="증식하기" class="btn btn-primary"/>
+                    </form>
+                  </div>                  
+                </div>                
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>      
+    <% } %>    
   </body>
-
 </html>
+
+
+
+

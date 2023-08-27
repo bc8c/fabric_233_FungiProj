@@ -18,13 +18,14 @@ router.get('/', async function(req, res, next) {
   else { // 로그인이 되어있는 경우
     const userData = JSON.parse(userCookie);
     const id = userData.username
+    console.log(userData.job)
     if (userData.job == "user"){
-      var result = await cc.cc_call(id,"GetFungiByOwner", "")+
+      var result = await cc.cc_call(id,"GetFungiByOwner", "")
+      console.log(result)
       res.render('index', { title: 'CryptoFungi', result: result });
     }
-    else {
-      var result = "--------------"
-      res.render('index', { title: 'FeedFactory', result: result });
+    else {      
+      res.render('index', { title: 'FeedFactory', result: "feed" });
     }    
     console.log(result)
     

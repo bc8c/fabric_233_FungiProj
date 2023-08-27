@@ -20,4 +20,19 @@ router.post('/', async(req, res, next) => {
     res.redirect('/');
 });
 
+router.post('/feed', async(req, res, next) => {
+    const userCookie  = req.cookies[USER_COOKIE_KEY];
+    const userData = JSON.parse(userCookie);
+
+    const id = userData.username    
+    const fungusid = req.body.fungusid
+    const feedid = req.body.feedid
+
+    var args = [fungusid, feedid];
+    // 생성파트
+    var result = await cc.cc_call(id, "Feed", args)
+    console.log(result)
+    res.redirect('/');
+});
+
 module.exports = router;

@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var signupRouter = require('./routes/signup');
 var loginRouter = require('./routes/login');
 var createFungusRouter = require('./routes/createFungus');
+var createFeedRouter = require('./routes/createFeed');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use('/', indexRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/createFungus', createFungusRouter);
+app.use('/createFeed', createFeedRouter);
 
 
 
@@ -48,5 +50,6 @@ app.use(function(err, req, res, next) {
 });
 
 console.log("out")
-cert.makeAdminWallet()
+cert.makeAdminWallet("org1")
+cert.makeAdminWallet("org2")
 module.exports = app;

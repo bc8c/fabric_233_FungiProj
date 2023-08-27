@@ -33,7 +33,7 @@ router.post('/', async(req, res, next) => {
     await users.createUser(newUser)
 
     // make wallet for user
-    await cert.makeUserWallet(username, "Org1MSP")
+    await cert.makeUserWallet(username, "org1")
 
     // db에 저장된 user 객체를 문자열 형태로 변환하여 쿠키에 저장
     console.log(JSON.stringify(newUser))
@@ -64,7 +64,7 @@ router.post('/feedfactory', async(req, res, next) => {
     await users.createUser(newUser)
 
     // make wallet for user
-    await cert.makeUserWallet(username, "Org2MSP")
+    await cert.makeUserWallet(username, "org2")
 
     // db에 저장된 user 객체를 문자열 형태로 변환하여 쿠키에 저장
     console.log(JSON.stringify(newUser))

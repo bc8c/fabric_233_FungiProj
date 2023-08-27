@@ -32,20 +32,24 @@ async function cc_call(id, fn_name, args) {
         });
 
         const network = await gateway.getNetwork("mychannel");
-        const contract = network.getContract("fungi");
+        
 
         var result;
 
         if (fn_name == "GetFungiByOwner") {
-        
+            const contract = network.getContract("fungi");
             result = await contract.evaluateTransaction("GetFungiByOwner");
-        // } else if (fn_name == "addRating") {
-        //     e = args[0];
-        //     p = args[1];
-        //     s = args[2];
-        //     result = await contract.submitTransaction("addRating", e, p, s);
-        } else if (fn_name == "CreateRandomFungus")
+        } else if (fn_name == "CreateRandomFungus"){
+            const contract = network.getContract("fungi");
             result = await contract.submitTransaction("CreateRandomFungus", args);
+        }
+        else if (fn_name == "Feed"){
+            const contract = network.getContract("fungi");
+            result = await contract.submitTransaction("Feed", args[0], args[1]);
+        } else if (fn_name == "CreateRandomFeed"){
+            const contract = network.getContract("feed");
+            result = await contract.submitTransaction("CreateRandomFeed", args);
+        }
         else result = "not supported function";
 
         console.log(`result in CC_call: ${result}`);
