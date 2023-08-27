@@ -3,20 +3,19 @@ var users = require('../public/js/users');
 var router = express.Router();
 
 // User Data for login
-const db = new Map();
 const USER_COOKIE_KEY = 'USER';
 
 router.get('/', (req, res, next) => {
     res.render('signup', { title: 'CryptoFungi' });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async(req, res, next) => {
     const { username, name, password } = req.body;
-    const exists = db.get(username);
+    const exists = await users.fetchUser(username);
 
     // 이미 존재하는 username일 경우 회원 가입 실패
     if (exists) {
-        res.status(400).send(`duplicate username: ${username}`);
+        res.status(400).send(`이미 존재하는 사용자 입니다.: ${username}`);
         return;
     }
 
@@ -28,15 +27,14 @@ router.post('/', (req, res, next) => {
         password,
     };
     // db.set(username, newUser);
-    users.createUser(username, name, password)
+    await users.createUser(newUser)
 
     // db에 저장된 user 객체를 문자열 형태로 변환하여 쿠키에 저장
+    console.log(JSON.stringify(newUser))
     res.cookie(USER_COOKIE_KEY, JSON.stringify(newUser));
     // 가입 완료 후, 루트 페이지로 이동
     res.redirect('/');
 });
-module.exports = db;
-module.exports = USER_COOKIE_KEY;
 module.exports = router;
 
 
