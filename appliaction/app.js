@@ -6,11 +6,12 @@ var logger = require('morgan');
 var cert = require('./public/js/cert');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var signupRouter = require('./routes/signup');
 var loginRouter = require('./routes/login');
+var createFungusRouter = require('./routes/createFungus');
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,9 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
+app.use('/createFungus', createFungusRouter);
 
 
 

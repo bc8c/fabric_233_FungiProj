@@ -1,5 +1,6 @@
 var express = require('express');
 var users = require('../public/js/users');
+var cert = require('../public/js/cert');
 var router = express.Router();
 
 // User Data for login
@@ -28,6 +29,9 @@ router.post('/', async(req, res, next) => {
     };
     // db.set(username, newUser);
     await users.createUser(newUser)
+
+    // make wallet for user
+    await cert.makeUserWallet(username)
 
     // db에 저장된 user 객체를 문자열 형태로 변환하여 쿠키에 저장
     console.log(JSON.stringify(newUser))
