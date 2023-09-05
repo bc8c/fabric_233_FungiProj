@@ -32,32 +32,25 @@ export CORE_PEER_ADDRESS=localhost:7051
 
 
 ## TEST1 : Invoking the chaincode
-infoln "TEST1-1 : Invoking the chaincode (Initialize)"
+infoln "TEST1 : Invoking the chaincode (BalanceOf)"
 set -x
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"Initialize","Args":[]}' >&log.txt
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"BalanceOf","Args":["eDUwOTo6Q049b3JnMWFkbWluLE9VPWFkbWluLE89SHlwZXJsZWRnZXIsU1Q9Tm9ydGggQ2Fyb2xpbmEsQz1VUzo6Q049ZmFicmljLWNhLXNlcnZlcixPVT1GYWJyaWMsTz1IeXBlcmxlZGdlcixTVD1Ob3J0aCBDYXJvbGluYSxDPVVT"]}' >&log.txt
 { set +x; } 2>/dev/null
 cat log.txt
 sleep 3
 
 ## TEST2 : Invoking the chaincode
-infoln "TEST2 : Invoking the chaincode (CreateRandomFungus)"
+infoln "TEST2 : Invoking the chaincode (OwnerOf)"
 set -x
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"CreateRandomFungus","Args":["TestFungus1"]}' >&log.txt
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"OwnerOf","Args":["0"]}' >&log.txt
 { set +x; } 2>/dev/null
 cat log.txt
 sleep 3
 
-## TEST3 : Query the chaincode
-infoln "TEST3 : Query the chaincode (GetFungiByOwner)"
+## TEST3 : Invoking the chaincode
+infoln "TEST3 : Invoking the chaincode (TransferFrom)"
 set -x
-peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["GetFungiByOwner"]}' >&log.txt
-{ set +x; } 2>/dev/null
-cat log.txt
-
-## TEST4 : Query the chaincode
-infoln "TEST4-2 : Invoking the chaincode (Feed)"
-set -x
-peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"Feed","Args":["0","0"]}' >&log.txt
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS -c '{"function":"TransferFrom","Args":["eDUwOTo6Q049b3JnMWFkbWluLE9VPWFkbWluLE89SHlwZXJsZWRnZXIsU1Q9Tm9ydGggQ2Fyb2xpbmEsQz1VUzo6Q049ZmFicmljLWNhLXNlcnZlcixPVT1GYWJyaWMsTz1IeXBlcmxlZGdlcixTVD1Ob3J0aCBDYXJvbGluYSxDPVVT","Recipient(to)address","0"]}' >&log.txt
 { set +x; } 2>/dev/null
 cat log.txt
 sleep 3
