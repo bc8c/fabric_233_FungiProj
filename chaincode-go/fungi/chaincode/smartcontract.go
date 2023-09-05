@@ -196,3 +196,73 @@ func (S *SmartContract) GetFungiByOwner(ctx contractapi.TransactionContextInterf
 	}
 	return fungi, nil
 }
+
+func (S *SmartContract) BalanceOf(ctx contractapi.TransactionContextInterface, owner string) (int, error){
+
+	results, err := ctx.GetStub().GetState(owner)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get balance: %v", err)
+	}
+
+	balance, _ := strconv.Atoi(string(results))
+
+	return balance, nil
+}
+
+func (S *SmartContract) OwnerOf(ctx contractapi.TransactionContextInterface, fungusid uint) (string, error){
+	
+	fungusBytes, err := S._getState(ctx, strconv.Itoa(int(fungusid)))
+	if err != nil {
+		return "", fmt.Errorf("failed to get fungus: %v", err)
+	}
+	var fungus Fungus
+	err = json.Unmarshal(fungusBytes, &fungus)
+	if err != nil {
+		return "", fmt.Errorf("failed to Unmarshal fungus: %v", err)
+	}
+	return fungus.Owner, nil
+}
+
+func (S *SmartContract) TransferFrom(ctx contractapi.TransactionContextInterface, from string, to string, fungusid uint) (bool, error) {
+
+	fungusBytes, err := S._getState(ctx, strconv.Itoa(int(fungusid)))
+	if err != nil {
+		return false, fmt.Errorf("failed to get fungus: %v", err)
+	}
+	if fungusBytes == nil {
+		return false, fmt.Errorf("not exists fungus: %v", err)
+	}
+	
+	var fungus Fungus
+	err = json.Unmarshal(fungusBytes, &fungus)
+
+	if fungus.Owner != from {
+		return false, fmt.Errorf("not a fungus owner's request.: %v", err)
+	}
+
+	fungus.Owner = to
+
+	assetJSON, err := json.Marshal(fungus)
+	if err != nil {
+		return false, fmt.Errorf("failed to marshal fungus: %v", err)
+	}
+	
+	// PutState fungusId
+	err = ctx.GetStub().PutState(strconv.Itoa(int(fungusid)), assetJSON)
+	if err != nil {
+		return false, fmt.Errorf("failed to put fungus state: %v", err)
+	}
+
+	//  update ownerFungusCount for from
+	err = S._updateOwnerFungusCount(ctx, from, -1)
+	if err != nil {
+		return false, fmt.Errorf("failed to put fungus state: %v", err)
+	}
+	//  update ownerFungusCount for to
+	err = S._updateOwnerFungusCount(ctx, to, 1)
+	if err != nil {
+		return false, fmt.Errorf("failed to put fungus state: %v", err)
+	}
+
+	return true, nil
+}
