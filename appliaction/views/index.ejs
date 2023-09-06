@@ -30,17 +30,28 @@
                   <p class="card-text"> 증식가능시간 : <%= date.toLocaleTimeString("ko-KR")%></p>
                   <p class="card-text"> 소유주 : <%= fungi[i].owner %></p>
                   <div class="card-header">
-                    <h5>버섯증식하기</h5>
+                    <h5>- 버섯증식하기</h5>
                     <form action="/createFungus/feed" method="post">  
                       <input type="hidden" name="fungusid" class="form-control" value= <%= fungi[i].fungusid %>>
                       <label> 먹이ID :  </label>
                       <input type="text" name="feedid" class="form-control"><br>
-                      <input type="submit" value="증식하기" class="btn btn-primary"/>
+                      <input type="submit" value="증식하기" class="btn btn-primary" style="width: 100%"/>
                     </form>
-                  </div>                  
-                </div>                
+                  </div>
+                  <br>
+                  <div class="card-header">
+                    <h5>- 버섯거래하기</h5>
+                    <form action="/transferFungus" method="post">  
+                      <input type="hidden" name="fungusid" class="form-control" value= <%= fungi[i].fungusid %>>
+                      <label> 버섯구매자 ID :  </label>
+                      <input type="text" name="feedid" class="form-control"><br>
+                      <input type="submit" value="버섯 보내기" class="btn btn-warning" style="width: 100%"/>
+                    </form>
+                  </div>
+                  
+                </div>
               </div>
-            </div>
+            </div>            
           <% } %>
         </div>
       </div>      
